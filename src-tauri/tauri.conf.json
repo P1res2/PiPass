@@ -14,10 +14,12 @@
       {
         "label": "main",
         "title": "PiPass",
-        "width": 600,
-        "height": 500,
+        "width": 500,
+        "height": 400,
+        "decorations": false,
         "resizable": true,
         "fullscreen": false,
+        "alwaysOnTop": true,
         "center": true,
         "visible": false
       }
