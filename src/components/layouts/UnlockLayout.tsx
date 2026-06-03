@@ -16,7 +16,7 @@ export function UnlockLayout({ children }: UnlockLayoutProps) {
   }, []);
 
   return (
-    <BaseLayout className="items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-900">
+    <BaseLayout className="items-center justify-center">
       <motion.div
         className="w-full max-w-sm"
         initial={{ opacity: 0, y: 10 }}

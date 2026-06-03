@@ -1,19 +1,20 @@
 import { useState } from "react";
+import { getCurrentWindow, LogicalSize } from "@tauri-apps/api/window";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/button";
-import { Toggle } from "../components/ui/toggle";
-import { Field, FieldGroup, FieldLabel } from "../components/ui/field";
+import { useVaultStore } from "@/stores/vaultStore";
+import { LockIcon } from "@/components/LockIcon";
+import { Button } from "@/components/ui/button";
+import { Toggle } from "@/components/ui/toggle";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "../components/ui/input-group";
+} from "@/components/ui/input-group";
 import { EyeIcon, EyeOffIcon, LockKeyholeOpen } from "lucide-react";
-import { useVaultStore } from "@/stores/vaultStore";
-import { LockIcon } from "@/components/LockIcon";
 
 export function UnlockPage() {
-  const vaultStore = useVaultStore();
+  const { unlock } = useVaultStore();
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +23,9 @@ export function UnlockPage() {
 
   const handleUnlock = async () => {
     setIsLoading(true);
-    const isUnlocked = await vaultStore.unlock(password);
+    const isUnlocked = await unlock(password);
+    const currentWindow = getCurrentWindow();
+
     if (!isUnlocked) {
       setIsLoading(false);
       return;
@@ -30,7 +33,13 @@ export function UnlockPage() {
 
     if (isUnlocked) {
       setIsLocked(false);
+
       await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      currentWindow.setSize(new LogicalSize(1280, 720));
+      currentWindow.center();
+      currentWindow.setAlwaysOnTop(false);
+
       navigate("/vault", { replace: true });
     }
   };
@@ -46,7 +55,6 @@ export function UnlockPage() {
       <FieldGroup>
         <div className="flex flex-col items-center gap-2 text-center">
           <div className="flex items-center justify-center rounded-md">
-            {/* <LockIcon className="size-6" /> */}
             <LockIcon isLocked={isLocked} />
           </div>
           <span className="sr-only">PiPass logo</span>

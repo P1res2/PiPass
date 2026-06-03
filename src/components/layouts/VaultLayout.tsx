@@ -1,22 +1,33 @@
-import { useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
-import { getCurrentWindow, LogicalSize } from "@tauri-apps/api/window";
 import { BaseLayout } from "./BaseLayout";
+import { Button } from "@/components/ui/button";
+import { Power } from "lucide-react";
+import { useVaultStore } from "@/stores/vaultStore";
 
 interface VaultLayoutProps {
   children: ReactNode;
 }
 
 export function VaultLayout({ children }: VaultLayoutProps) {
-  useEffect(() => {
-    const currentWindow = getCurrentWindow();
-    currentWindow.setSize(new LogicalSize(1280, 720));
-    currentWindow.center();
-    currentWindow.setAlwaysOnTop(false);
-  }, []);
+  const navigate = useNavigate();
+  const { lock } = useVaultStore();
+
+  const handleExit = async () => {
+    lock();
+    navigate("/", { replace: true });
+  };
 
   return (
-    <BaseLayout className="items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-900">
+    <BaseLayout className="items-center justify-center">
+      <Button
+        className="fixed top-10 right-4"
+        variant={"secondary"}
+        onClick={handleExit}
+      >
+        <Power />
+      </Button>
       <motion.div
         className="w-full max-w-sm"
         initial={{ opacity: 0, y: 10 }}
