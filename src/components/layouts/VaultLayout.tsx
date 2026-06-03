@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { BaseLayout } from "./BaseLayout";
 import { Button } from "@/components/ui/button";
-import { Power } from "lucide-react";
+import { Power, Settings } from "lucide-react";
 import { useVaultStore } from "@/stores/vaultStore";
 
 interface VaultLayoutProps {
@@ -37,6 +37,15 @@ export function VaultLayout({ children }: VaultLayoutProps) {
       >
         {children}
       </motion.div>
+      <Button
+        className="fixed bottom-4 left-4 "
+        variant="secondary"
+        size="icon"
+        onClick={() => navigate("/settings")}
+      >
+        <span className="sr-only">Settings</span>
+        <Settings />
+      </Button>
     </BaseLayout>
   );
 }
