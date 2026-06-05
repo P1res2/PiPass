@@ -4,7 +4,7 @@ import { getSettings, saveSettings, type Settings } from "@/lib/settings";
 
 interface SettingsState {
   settings: Settings | null;
-  load: () => Promise<void>;
+  load: () => Promise<Settings>;
   update: (updates: Partial<Settings>) => Promise<void>;
 }
 
@@ -12,17 +12,29 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   settings: null,
 
   load: async () => {
-    const settings = await getSettings();
-    set({ settings });
+    try {
+      const settings = await getSettings();
+      set({ settings });
+      return settings;
+    } catch (err) {
+      console.error("Failed to load settings:", err);
+      const defaults = await getSettings();
+      set({ settings: defaults });
+      return defaults;
+    }
   },
 
   update: async (updates) => {
-    if (updates.language) {
-      await i18n.changeLanguage(updates.language);
+    try {
+      if (updates.language) {
+        await i18n.changeLanguage(updates.language);
+      }
+      await saveSettings(updates);
+      set((state) => ({
+        settings: state.settings ? { ...state.settings, ...updates } : null,
+      }));
+    } catch (err) {
+      console.error("Failed to save settings:", err);
     }
-    await saveSettings(updates);
-    set((state) => ({
-      settings: state.settings ? { ...state.settings, ...updates } : null,
-    }));
   },
 }));

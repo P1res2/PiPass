@@ -1,17 +1,30 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "motion/react";
-import { routes } from "@/routes";
 import { useSettingsStore } from "@/stores/settingsStore";
+import i18n from "@/lib/i18n";
+import { routes } from "@/routes";
 
 function AnimatedRoutes() {
   const location = useLocation();
-  const { load } = useSettingsStore();
+  const [isReady, setIsReady] = useState(i18n.isInitialized);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    useSettingsStore
+      .getState()
+      .load()
+      .then((settings) => {
+        if (settings?.language) {
+          i18n.changeLanguage(settings.language);
+        }
+        setIsReady(true);
+      });
+  }, []);
+
+  if (!isReady) {
+    return null;
+  }
 
   return (
     <AnimatePresence mode="wait">
