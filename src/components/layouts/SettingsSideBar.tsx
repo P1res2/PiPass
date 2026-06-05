@@ -1,9 +1,8 @@
 import type { ComponentProps } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { navSettings } from "@/routes";
-import { getPathEnd } from "@/lib/navigation";
+import { getPathLeaf } from "@/lib/navigation";
 import { SearchForm } from "@/components/SearchForm";
-import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -15,30 +14,20 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { ArrowLeft } from "lucide-react";
 
 export function SettingsSideBar({ ...props }: ComponentProps<typeof Sidebar>) {
-  const navigate = useNavigate();
   const location = useLocation();
 
   function isActiveRoute(url: string): boolean {
-    const pathStart = getPathEnd(url);
-    const currentpathStart = getPathEnd(location.pathname);
+    const pathStart = getPathLeaf(url);
+    const currentpathStart = getPathLeaf(location.pathname);
 
     return pathStart === currentpathStart;
   }
 
   return (
     <Sidebar {...props}>
-      <SidebarHeader className="flex flex-row items-center gap-0">
-        <Button
-          variant="outline"
-          size="icon-lg"
-          onClick={() => navigate("/vault")}
-        >
-          <span className="sr-only">Back</span>
-          <ArrowLeft />
-        </Button>
+      <SidebarHeader>
         <SearchForm />
       </SidebarHeader>
       <SidebarContent>

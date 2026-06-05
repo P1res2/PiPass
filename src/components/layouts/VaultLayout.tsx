@@ -41,7 +41,7 @@ export function VaultLayout({ children }: VaultLayoutProps) {
         className="fixed bottom-4 left-4 "
         variant="secondary"
         size="icon"
-        onClick={() => navigate("/settings", { replace: false })}
+        onClick={() => navigate("/settings/general", { replace: true })}
       >
         <span className="sr-only">Settings</span>
         <Settings />

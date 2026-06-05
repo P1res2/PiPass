@@ -1,4 +1,3 @@
-// src/pages/routes.tsx
 import {
   SettingsLayout,
   UnlockLayout,
@@ -45,7 +44,7 @@ export interface Route {
 
 export const navSettings: NavGroup[] = [
   {
-    items: [{ title: "Geral", icon: Settings, url: "/settings" }],
+    items: [{ title: "Geral", icon: Settings, url: "/settings/general" }],
   },
   {
     title: "Experiência",
@@ -74,7 +73,7 @@ export const navSettings: NavGroup[] = [
 // ── Mapa url → componente (separado do nav) ──────────
 
 const settingsPages: Record<string, ComponentType> = {
-  "/settings": GeneralSettingsPage,
+  "/settings/general": GeneralSettingsPage,
   "/settings/appearance": AppearancePage,
   "/settings/keyboard-shortcuts": KeyboardShortcutsPage,
   "/settings/language": LanguagePage,
