@@ -20,7 +20,7 @@ export function VaultLayout({ children }: VaultLayoutProps) {
   };
 
   return (
-    <BaseLayout className="items-center justify-center">
+    <BaseLayout className="flex flex-1 items-center justify-center">
       <Button
         className="fixed top-10 right-4"
         variant={"secondary"}
@@ -41,7 +41,7 @@ export function VaultLayout({ children }: VaultLayoutProps) {
         className="fixed bottom-4 left-4 "
         variant="secondary"
         size="icon"
-        onClick={() => navigate("/settings")}
+        onClick={() => navigate("/settings", { replace: false })}
       >
         <span className="sr-only">Settings</span>
         <Settings />

@@ -11,7 +11,7 @@ export function BaseLayout({ children, className }: BaseLayoutProps) {
   return (
     <div className="flex flex-col h-screen">
       <TitleBar />
-      <main className={cn("flex flex-1 overflow-hidden bg-gradient-to-br from-zinc-800 to-zinc-900 p-4", className)}>
+      <main className={cn("overflow-hidden bg-gradient-to-br from-zinc-800 to-zinc-900", className)}>
         {children}
       </main>
     </div>

@@ -15,6 +15,7 @@
     "@fontsource-variable/oxanium": "^5.2.8",
     "@tailwindcss/vite": "^4.3.0",
     "@tauri-apps/plugin-fs": "^2.5.1",
+    "@tauri-apps/plugin-store": "^2.4.3",
     "@tauri-apps/plugin-stronghold": "^2.3.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

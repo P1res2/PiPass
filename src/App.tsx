@@ -2,10 +2,16 @@ import { useEffect } from "react";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "motion/react";
-import { routes } from "./routes";
+import { routes } from "@/routes";
+import { useSettingsStore } from "@/stores/settingsStore";
 
 function AnimatedRoutes() {
   const location = useLocation();
+  const { load } = useSettingsStore();
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   return (
     <AnimatePresence mode="wait">

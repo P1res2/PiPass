@@ -16,7 +16,7 @@ export function UnlockLayout({ children }: UnlockLayoutProps) {
   }, []);
 
   return (
-    <BaseLayout className="items-center justify-center">
+    <BaseLayout className="flex flex-1 items-center justify-center">
       <motion.div
         className="w-full max-w-sm"
         initial={{ opacity: 0, y: 10 }}
