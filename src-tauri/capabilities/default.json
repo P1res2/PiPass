@@ -8,12 +8,7 @@
   "permissions": [
     "core:default",
     "core:path:default",
-    "stronghold:default",
-    "fs:default",
-    "fs:allow-exists",
-    "fs:allow-applocaldata-read",
-    "fs:allow-applocaldata-write",
-    "fs:scope-applocaldata-recursive",
+    "core:tray:default",
     "core:window:allow-set-size",
     "core:window:allow-set-fullscreen",
     "core:window:allow-center",
@@ -23,6 +18,12 @@
     "core:window:allow-toggle-maximize",
     "core:window:allow-close",
     "core:window:allow-start-dragging",
-    "store:default"
+    "stronghold:default",
+    "store:default",
+    "fs:default",
+    "fs:allow-exists",
+    "fs:allow-applocaldata-read",
+    "fs:allow-applocaldata-write",
+    "fs:scope-applocaldata-recursive"
   ]
 }
