@@ -30,5 +30,13 @@
       "portuguese": "Portuguese, Brazil",
       "english": "English"
     }
+  },
+  "appearance-page": {
+    "select-theme": "Select theme",
+    "select-theme-description": "Choose the theme you want to use in PiPass.",
+    "current-theme": "Current theme",
+    "dark": "Dark",
+    "light": "Light",
+    "system": "System"
   }
 }

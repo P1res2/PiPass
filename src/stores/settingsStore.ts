@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import i18n from "@/lib/i18n";
 import { getSettings, saveSettings, type Settings } from "@/lib/settings";
+import { applyTheme } from "@/lib/theme";
 
 interface SettingsState {
   settings: Settings | null;
@@ -28,6 +29,9 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     try {
       if (updates.language) {
         await i18n.changeLanguage(updates.language);
+      }
+      if (updates.theme) {
+        applyTheme(updates.theme);
       }
       await saveSettings(updates);
       set((state) => ({

@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "motion/react";
 import { useSettingsStore } from "@/stores/settingsStore";
 import i18n from "@/lib/i18n";
+import { applyTheme } from "@/lib/theme";
 import { routes } from "@/routes";
 
 function AnimatedRoutes() {
@@ -18,6 +19,7 @@ function AnimatedRoutes() {
         if (settings?.language) {
           i18n.changeLanguage(settings.language);
         }
+        if (settings?.theme) applyTheme(settings.theme);
         setIsReady(true);
       });
   }, []);
