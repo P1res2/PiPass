@@ -4,6 +4,8 @@ use tauri::{
     Manager,
 };
 
+mod commands;
+
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::new().build())
@@ -23,7 +25,7 @@ pub fn run() {
             let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&show, &quit_i])?;
 
-            let tray = TrayIconBuilder::new()
+            let _tray = TrayIconBuilder::new()
                 .menu(&menu)
                 .show_menu_on_left_click(false)
                 .icon(app.default_window_icon().unwrap().clone())
@@ -38,23 +40,22 @@ pub fn run() {
                     "quit" => app.exit(0),
                     _ => {}
                 })
-                .build(app)?;
-
-            tray.on_tray_icon_event(|tray, event| match event {
-                TrayIconEvent::Click {
-                    button: MouseButton::Left,
-                    button_state: MouseButtonState::Up,
-                    ..
-                } => {
-                    let app = tray.app_handle();
-                    if let Some(window) = app.get_webview_window("main") {
-                        let _ = window.unminimize();
-                        let _ = window.show();
-                        let _ = window.set_focus();
+                .on_tray_icon_event(|tray, event| match event {
+                    TrayIconEvent::Click {
+                        button: MouseButton::Left,
+                        button_state: MouseButtonState::Up,
+                        ..
+                    } => {
+                        let app = tray.app_handle();
+                        if let Some(window) = app.get_webview_window("main") {
+                            let _ = window.unminimize();
+                            let _ = window.show();
+                            let _ = window.set_focus();
+                        }
                     }
-                }
-                _ => {}
-            });
+                    _ => {}
+                })
+                .build(app)?;
 
             Ok(())
         })
@@ -64,6 +65,9 @@ pub fn run() {
                 window.hide().unwrap();
             }
         })
+        .invoke_handler(tauri::generate_handler![
+            commands::process::get_focused_process,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

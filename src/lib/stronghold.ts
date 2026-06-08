@@ -1,13 +1,13 @@
 import { Client, Stronghold } from "@tauri-apps/plugin-stronghold";
-import { appLocalDataDir  } from "@tauri-apps/api/path";
+import { appLocalDataDir } from "@tauri-apps/api/path";
 
 let _stronghold: Stronghold | null = null;
 let _client: Client | null = null;
 
-// ── Inicialização ──────────────────────────────
+// ── Initialization ─────────────────────────────
 
 export async function loadVault(password: string) {
-  const vaultPath = `${await appLocalDataDir ()}/pipass.hold`;
+  const vaultPath = `${await appLocalDataDir()}/pipass.hold`;
   _stronghold = await Stronghold.load(vaultPath, password);
 
   try {
@@ -19,7 +19,12 @@ export async function loadVault(password: string) {
 }
 
 export async function saveVault() {
-  getStronghold().stronghold.save();
+  await getStronghold().stronghold.save();
+}
+
+export function clearVault() {
+  _stronghold = null;
+  _client = null;
 }
 
 function getStronghold() {
@@ -27,7 +32,7 @@ function getStronghold() {
   return { stronghold: _stronghold, client: _client };
 }
 
-// ── Credenciais ────────────────────────────────
+// ── Credentials ────────────────────────────────
 
 export async function saveCredential(key: string, value: string) {
   const { client, stronghold } = getStronghold();

@@ -1,20 +1,13 @@
 import { create } from "zustand";
 import { useSettingsStore } from "@/stores/settingsStore";
+import type { Credential } from "@/lib/credential";
 import {
   loadVault,
   saveCredential,
   getCredential,
   removeCredential,
+  clearVault,
 } from "@/lib/stronghold";
-
-export interface Credential {
-  id: string;
-  name: string;
-  url: string;
-  username: string;
-  createdAt: number;
-  updatedAt: number;
-}
 
 interface VaultState {
   isUnlocked: boolean;
@@ -101,6 +94,7 @@ export const useVaultStore = create<VaultState>((set, get) => ({
 
   lock: () => {
     clearLockTimer();
+    clearVault();
     set({ isUnlocked: false, credentials: [] });
   },
 
