@@ -9,6 +9,10 @@ input::-webkit-credentials-auto-fill-button {
   display: none;
 }
 
+span {
+  padding-top: 4px;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -78,7 +82,7 @@ input::-webkit-credentials-auto-fill-button {
     --chart-3: oklch(0.648 0.2 131.684);
     --chart-4: oklch(0.532 0.157 131.589);
     --chart-5: oklch(0.453 0.124 130.933);
-    --radius: 0.525rem;
+    --radius: 0.5rem;
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.141 0.005 285.823);
     --sidebar-primary: oklch(0.558 0.288 302.321);

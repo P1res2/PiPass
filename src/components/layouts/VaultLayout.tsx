@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
+import { useVaultStore } from "@/stores/vaultStore";
 import { BaseLayout } from "./BaseLayout";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Lock, Settings } from "lucide-react";
-import { useVaultStore } from "@/stores/vaultStore";
 
 interface VaultLayoutProps {
   children: ReactNode;
@@ -20,24 +21,26 @@ export function VaultLayout({ children }: VaultLayoutProps) {
   };
 
   return (
-    <BaseLayout className="flex flex-1 items-center justify-center">
+    <BaseLayout className="pt-6 h-full">
+      <ScrollArea>
+        <motion.div
+          className="max-w-[60vw] mx-auto"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+        >
+          {children}
+        </motion.div>
+      </ScrollArea>
       <Button
-        className="fixed top-10 right-4"
+        className="fixed bottom-12 left-4"
         variant={"secondary"}
         size="icon"
         onClick={handleExit}
       >
         <Lock />
       </Button>
-      <motion.div
-        className="w-full max-w-sm"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.2 }}
-      >
-        {children}
-      </motion.div>
       <Button
         className="fixed bottom-4 left-4 "
         variant="secondary"

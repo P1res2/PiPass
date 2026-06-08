@@ -52,5 +52,10 @@
         "never": "Nunca"
       }
     }
+  },
+  "vault-page": {
+    "title": "Cofre de Senhas",
+    "description": "Gerencie suas senhas salvas.",
+    "create": "Adicionar Senha"
   }
 }

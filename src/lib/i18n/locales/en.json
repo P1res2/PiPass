@@ -52,5 +52,10 @@
         "never": "Never"
       }
     }
+  },
+  "vault-page": {
+    "title": "Password Vault",
+    "description": "Manage your saved passwords.",
+    "create": "Add Password"
   }
 }
