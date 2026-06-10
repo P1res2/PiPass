@@ -8,15 +8,17 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Plus, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function VaultPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { credentials, setSearch } = useVaultStore();
 
   return (
     <div className="flex flex-col mt-12">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center rounded">
         <div>
           <h1 className="text-2xl font-bold">{t("vault-page.title")}</h1>
           <p className="text-sm">{t("vault-page.description")}</p>
@@ -39,7 +41,7 @@ export function VaultPage() {
               </InputGroupAddon>
             )}
           </InputGroup>
-          <Button>
+          <Button onClick={() => navigate("/add-password", { replace: false })}>
             <Plus /> <span>{t("vault-page.create")}</span>
           </Button>
         </div>

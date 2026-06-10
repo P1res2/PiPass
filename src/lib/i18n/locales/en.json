@@ -11,6 +11,15 @@
     "submit": "Unlock",
     "error": "Wrong password"
   },
+  "vault-page": {
+    "title": "Password Vault",
+    "description": "Manage your saved passwords.",
+    "create": "Add Password"
+  },
+  "add-password-page": {
+    "title": "Add Password",
+    "description": "Create a new password to store securely."
+  },
   "settings": {
     "title": "Settings",
     "general": "General",
@@ -52,10 +61,5 @@
         "never": "Never"
       }
     }
-  },
-  "vault-page": {
-    "title": "Password Vault",
-    "description": "Manage your saved passwords.",
-    "create": "Add Password"
   }
 }

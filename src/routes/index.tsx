@@ -1,10 +1,13 @@
+import type { ComponentType } from "react";
 import {
   SettingsLayout,
   UnlockLayout,
   VaultLayout,
+  AddPasswordLayout
 } from "@/components/layouts";
 import { UnlockPage } from "./UnlockPage";
 import { VaultPage } from "./VaultPage";
+import { AddPasswordPage } from "./AddPasswordPage";
 import {
   GeneralSettingsPage,
   AppearancePage,
@@ -19,7 +22,6 @@ import {
   Settings,
   ShieldAlert,
 } from "lucide-react";
-import type { ComponentType } from "react";
 
 // ── Tipagem ──────────────────────────────────────────
 
@@ -93,5 +95,6 @@ const settingsRoutes: Route[] = navSettings
 export const routes: Route[] = [
   { path: "/", element: UnlockPage, layout: UnlockLayout },
   { path: "/vault", element: VaultPage, layout: VaultLayout },
+  { path: "/add-password", element: AddPasswordPage, layout: AddPasswordLayout},
   ...settingsRoutes,
 ];

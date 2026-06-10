@@ -11,6 +11,15 @@
     "submit": "Desbloquear",
     "error": "Senha incorreta"
   },
+  "vault-page": {
+    "title": "Cofre de Senhas",
+    "description": "Gerencie suas senhas salvas.",
+    "create": "Adicionar Senha"
+  },
+  "add-password-page": {
+    "title": "Adicionar senha",
+    "description": "Crie uma nova senha para armazenar com segurança."
+  },
   "settings": {
     "title": "Configurações",
     "general": "Geral",
@@ -52,10 +61,5 @@
         "never": "Nunca"
       }
     }
-  },
-  "vault-page": {
-    "title": "Cofre de Senhas",
-    "description": "Gerencie suas senhas salvas.",
-    "create": "Adicionar Senha"
   }
 }
