@@ -4,7 +4,6 @@ import { motion } from "motion/react";
 import { useVaultStore } from "@/stores/vaultStore";
 import { BaseLayout } from "./BaseLayout";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Lock, Settings } from "lucide-react";
 
 interface VaultLayoutProps {
@@ -22,17 +21,15 @@ export function VaultLayout({ children }: VaultLayoutProps) {
 
   return (
     <BaseLayout className="pt-6 h-full">
-      <ScrollArea>
-        <motion.div
-          className="max-w-[60vw] mx-auto"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
-        >
-          {children}
-        </motion.div>
-      </ScrollArea>
+      <motion.div
+        className="max-w-[60vw] mx-auto my-8"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.2 }}
+      >
+        {children}
+      </motion.div>
       <Button
         className="fixed bottom-12 left-4"
         variant={"secondary"}

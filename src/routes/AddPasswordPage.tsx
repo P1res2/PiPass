@@ -93,7 +93,7 @@ export function AddPasswordPage() {
   }
 
   return (
-    <div className="flex flex-col mt-12">
+    <div className="flex flex-col mt-16">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">{t("add-password-page.title")}</h1>
