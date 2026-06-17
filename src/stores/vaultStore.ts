@@ -8,6 +8,7 @@ import {
   removeCredential,
   clearVault,
 } from "@/lib/stronghold";
+import { fetchAndSaveFavicon } from "@/lib/favicon";
 
 interface VaultState {
   isUnlocked: boolean;
@@ -116,9 +117,12 @@ export const useVaultStore = create<VaultState>((set, get) => ({
 
   addCredential: async (cred, password) => {
     const id = crypto.randomUUID();
+    const iconPath = await fetchAndSaveFavicon(cred.target, id);
+    console.log(iconPath);
     const newCred: Credential = {
       ...cred,
       id,
+      iconPath: iconPath,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };

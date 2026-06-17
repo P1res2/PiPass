@@ -12,6 +12,7 @@ export interface Credential {
   name: string;
   identifier: string; // email, username, phone, document, api key
   target: CredentialTarget;
+  iconPath?: string;
   createdAt: number;
   updatedAt: number;
 }

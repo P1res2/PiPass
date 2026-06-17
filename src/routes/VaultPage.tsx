@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useVaultStore } from "@/stores/vaultStore";
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/card";
 import { Toggle } from "@/components/ui/toggle";
 import { Copy, EyeIcon, EyeOffIcon, Plus, Search } from "lucide-react";
+import { getFaviconSrc } from "@/lib/favicon";
 
 export function VaultPage() {
   const { t } = useTranslation();
@@ -88,12 +89,19 @@ function CredentialList({ credentials }: { credentials: Credential[] }) {
 
 function CredentialCard({ credential }: { credential: Credential }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [src, setSrc] = useState("");
+
+  useEffect(() => {
+    if (credential.iconPath) {
+      getFaviconSrc(credential.iconPath).then(setSrc);
+    }
+  }, [credential.iconPath]);
 
   return (
     <Card>
       <CardHeader>
-        <div className="flex gap-2">
-          <img src="/favicon.svg"/>
+        <div className="flex gap-2 justify-start items-center">
+          <img src={src} alt="favicon" width={32} height={32} />
           <CardTitle>
             <span className="text-lg">{credential.name}</span>
           </CardTitle>
