@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { invoke } from "@tauri-apps/api/core";
 import { useSettingsStore } from "@/stores/settingsStore";
 import type { Credential } from "@/lib/credential";
 import {
@@ -16,7 +17,7 @@ interface VaultState {
   searchQuery: string;
 
   unlock: (password: string) => Promise<boolean>;
-  lock: () => void;
+  lock: () => Promise<void>;
   addCredential: (
     cred: Omit<Credential, "id" | "createdAt" | "updatedAt">,
     password: string,
@@ -63,7 +64,7 @@ export function startLockTimer(lockFn: () => void) {
   }, delayMs);
 }
 
-// Export para permitir debug
+// Export for debug
 export function getLockTimerInfo() {
   return {
     isActive: _lockTimer !== null,
@@ -82,9 +83,11 @@ export const useVaultStore = create<VaultState>((set, get) => ({
       set({ isUnlocked: true });
       await get().loadCredentials();
 
-      // Inicia o timer de auto-lock com a função lock do store
-      const lockFn = () => {
-        get().lock();
+      await invoke("set_vault_state", { unlocked: true });
+
+      // Starts the self-lock timer with the store lock function
+      const lockFn = async () => {
+        await get().lock();
       };
       startLockTimer(lockFn);
       return true;
@@ -93,9 +96,10 @@ export const useVaultStore = create<VaultState>((set, get) => ({
     }
   },
 
-  lock: () => {
+  lock: async () => {
     clearLockTimer();
     clearVault();
+    await invoke("set_vault_state", { unlocked: false });
     set({ isUnlocked: false, credentials: [] });
   },
 
@@ -132,7 +136,7 @@ export const useVaultStore = create<VaultState>((set, get) => ({
 
     await saveCredential(`secret:${id}`, password);
 
-    // Update índice
+    // Update index
     const raw = await getCredential("index");
     const ids: string[] = raw ? JSON.parse(raw) : [];
     await saveCredential("index", JSON.stringify([...ids, id]));
@@ -160,7 +164,7 @@ export const useVaultStore = create<VaultState>((set, get) => ({
     await removeCredential(`meta:${id}`);
     await removeCredential(`secret:${id}`);
 
-    // Remove from índice
+    // Remove from index
     const raw = await getCredential("index");
     const ids: string[] = raw ? JSON.parse(raw) : [];
     await saveCredential("index", JSON.stringify(ids.filter((i) => i !== id)));

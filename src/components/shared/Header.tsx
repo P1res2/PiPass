@@ -69,7 +69,7 @@ export function Header({
           className="fixed right-4"
           variant="ghost"
           size="icon"
-          onClick={() => navigate("/vault", { replace: true })}
+          onClick={() => navigate("/", { replace: true })}
         >
           <X />
         </Button>

@@ -1,11 +1,9 @@
 import type { ComponentType } from "react";
 import {
   SettingsLayout,
-  UnlockLayout,
   VaultLayout,
-  AddPasswordLayout
+  AddPasswordLayout,
 } from "@/components/layouts";
-import { UnlockPage } from "./UnlockPage";
 import { VaultPage } from "./VaultPage";
 import { AddPasswordPage } from "./AddPasswordPage";
 import {
@@ -46,18 +44,28 @@ export interface Route {
 
 export const navSettings: NavGroup[] = [
   {
-    items: [{ title: "settings.general", icon: Settings, url: "/settings/general" }],
+    items: [
+      { title: "settings.general", icon: Settings, url: "/settings/general" },
+    ],
   },
   {
     title: "settings.experience",
     items: [
-      { title: "settings.appearance", icon: Palette, url: "/settings/appearance" },
+      {
+        title: "settings.appearance",
+        icon: Palette,
+        url: "/settings/appearance",
+      },
       {
         title: "settings.keyboard-shortcuts",
         icon: Keyboard,
         url: "/settings/keyboard-shortcuts",
       },
-      { title: "settings.language", icon: Languages, url: "/settings/language" },
+      {
+        title: "settings.language",
+        icon: Languages,
+        url: "/settings/language",
+      },
     ],
   },
   {
@@ -93,8 +101,11 @@ const settingsRoutes: Route[] = navSettings
 // ── Rotas principais ─────────────────────────────────
 
 export const routes: Route[] = [
-  { path: "/", element: UnlockPage, layout: UnlockLayout },
-  { path: "/vault", element: VaultPage, layout: VaultLayout },
-  { path: "/add-password", element: AddPasswordPage, layout: AddPasswordLayout},
+  { path: "/", element: VaultPage, layout: VaultLayout },
+  {
+    path: "/add-password",
+    element: AddPasswordPage,
+    layout: AddPasswordLayout,
+  },
   ...settingsRoutes,
 ];

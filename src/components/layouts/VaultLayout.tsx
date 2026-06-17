@@ -15,7 +15,7 @@ export function VaultLayout({ children }: VaultLayoutProps) {
   const { lock } = useVaultStore();
 
   const handleExit = async () => {
-    lock();
+    await lock();
     navigate("/", { replace: true });
   };
 

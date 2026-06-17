@@ -14,11 +14,22 @@
       {
         "label": "main",
         "title": "PiPass",
-        "width": 500,
-        "height": 400,
+        "width": 1280,
+        "height": 720,
         "decorations": false,
         "resizable": true,
         "fullscreen": false,
+        "alwaysOnTop": false,
+        "center": true,
+        "visible": false
+      },
+      {
+        "label": "auth",
+        "title": "PiPass",
+        "width": 500,
+        "height": 400,
+        "decorations": false,
+        "resizable": false,
         "alwaysOnTop": true,
         "center": true,
         "visible": false

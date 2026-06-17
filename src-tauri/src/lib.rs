@@ -1,3 +1,5 @@
+use crate::commands::vault::VaultState;
+use std::sync::Mutex;
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
@@ -12,6 +14,10 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_fs::init())
+        // Start vault state
+        .manage(VaultState {
+            is_unlocked: Mutex::new(false),
+        })
         .setup(|app| {
             let salt_path = app
                 .path()
@@ -33,11 +39,7 @@ pub fn run() {
                 .icon(app.default_window_icon().unwrap().clone())
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "show" => {
-                        if let Some(window) = app.get_webview_window("main") {
-                            let _ = window.unminimize();
-                            let _ = window.show();
-                            let _ = window.set_focus();
-                        }
+                        handle_open_window(app);
                     }
                     "quit" => app.exit(0),
                     _ => {}
@@ -48,12 +50,7 @@ pub fn run() {
                         button_state: MouseButtonState::Up,
                         ..
                     } => {
-                        let app = tray.app_handle();
-                        if let Some(window) = app.get_webview_window("main") {
-                            let _ = window.unminimize();
-                            let _ = window.show();
-                            let _ = window.set_focus();
-                        }
+                        handle_open_window(tray.app_handle());
                     }
                     _ => {}
                 })
@@ -70,7 +67,20 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::process::get_focused_process,
             commands::icon::extract_exe_icon,
+            commands::vault::set_vault_state,
+            commands::vault::get_vault_state,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+fn handle_open_window(app: &tauri::AppHandle) {
+    let state = app.state::<VaultState>();
+    let is_unlocked = *state.is_unlocked.lock().unwrap();
+
+    if let Some(window) = app.get_webview_window(if is_unlocked {"main"} else {"auth"}) {
+        let _ = window.unminimize();
+        let _ = window.show();
+        let _ = window.set_focus();
+    }
 }

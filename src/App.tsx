@@ -1,62 +1,44 @@
-import { useEffect, useState } from "react";
-import { LogicalSize } from "@tauri-apps/api/window";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import {
-  MemoryRouter,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { useEffect } from "react";
+import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "motion/react";
+import {
+  getCurrentWebviewWindow,
+  WebviewWindow,
+} from "@tauri-apps/api/webviewWindow";
+import { listen } from "@tauri-apps/api/event";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { startLockTimer, useVaultStore } from "@/stores/vaultStore";
-import i18n from "@/lib/i18n";
+import { loadVault } from "@/lib/stronghold";
 import { applyTheme } from "@/lib/theme";
+import i18n from "@/lib/i18n";
 import { routes } from "@/routes";
 
 function AnimatedRoutes() {
   const location = useLocation();
-  const navigate = useNavigate();
   const isUnlocked = useVaultStore((state) => state.isUnlocked);
-  const [isReady, setIsReady] = useState(i18n.isInitialized);
 
-  // Init settings
+  // When lock, hide the main and show the auth
   useEffect(() => {
-    useSettingsStore
-      .getState()
-      .load()
-      .then((settings) => {
-        if (settings?.language) {
-          i18n.changeLanguage(settings.language);
-        }
-        if (settings?.theme) applyTheme(settings.theme);
-        setIsReady(true);
-      });
-  }, []);
-
-  // Redirect to locked page if not unlocked
-  useEffect(() => {
-    if (!isUnlocked && location.pathname !== "/") {
-      const currentWindow = getCurrentWebviewWindow();
-      currentWindow.setSize(new LogicalSize(500, 400));
-      currentWindow.center();
-      currentWindow.setAlwaysOnTop(true);
-      currentWindow.close();
-      navigate("/", { replace: true });
+    if (!isUnlocked) {
+      const run = async () => {
+        await getCurrentWebviewWindow().close();
+        const auth = await WebviewWindow.getByLabel("auth");
+        await auth?.show();
+        await auth?.center();
+        await auth?.setFocus();
+      };
+      run();
     }
-  }, [isUnlocked, location.pathname, navigate]);
+  }, [isUnlocked]);
 
-  // Check if there is activity
+  // Activity tracker pra auto-lock
   useEffect(() => {
     if (!isUnlocked) return;
 
-    const reset = () => {
-      const lockFn = () => {
-        useVaultStore.getState().lock();
-      };
-      startLockTimer(lockFn);
-    };
+    const reset = () =>
+      startLockTimer(async () => {
+        await useVaultStore.getState().lock();
+      });
 
     const timer = setTimeout(() => {
       window.addEventListener("mousemove", reset);
@@ -70,17 +52,12 @@ function AnimatedRoutes() {
     };
   }, [isUnlocked]);
 
-  if (!isReady) {
-    return null;
-  }
-
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         {routes.map((route) => {
           const Component = route.element;
           const Layout = route.layout;
-
           return (
             <Route
               key={route.path}
@@ -104,11 +81,26 @@ function AnimatedRoutes() {
 
 function App() {
   useEffect(() => {
+    let unlisten: (() => void) | undefined;
+
     const init = async () => {
-      const main = getCurrentWebviewWindow();
-      await main.show();
+      const settings = await useSettingsStore.getState().load();
+      if (settings?.language) i18n.changeLanguage(settings.language);
+      if (settings?.theme) applyTheme(settings.theme);
+
+      unlisten = await listen<string>("vault-unlocked", async (event) => {
+        await loadVault(event.payload);
+        await useVaultStore.getState().loadCredentials();
+        useVaultStore.setState({ isUnlocked: true });
+
+        const main = getCurrentWebviewWindow();
+        await main.show();
+        await main.setFocus();
+      });
     };
+
     init();
+    return () => unlisten?.();
   }, []);
 
   return (
