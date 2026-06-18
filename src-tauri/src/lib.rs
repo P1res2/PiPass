@@ -10,6 +10,7 @@ mod commands;
 
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_store::Builder::new().build())
@@ -17,6 +18,7 @@ pub fn run() {
         // Start vault state
         .manage(VaultState {
             is_unlocked: Mutex::new(false),
+            pending_confirmation: Mutex::new(None),
         })
         .setup(|app| {
             let salt_path = app
@@ -69,6 +71,9 @@ pub fn run() {
             commands::icon::extract_exe_icon,
             commands::vault::set_vault_state,
             commands::vault::get_vault_state,
+            commands::pass::request_confirmation,
+            commands::pass::confirm_action,
+            commands::pass::cancel_confirmation,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -78,7 +83,7 @@ fn handle_open_window(app: &tauri::AppHandle) {
     let state = app.state::<VaultState>();
     let is_unlocked = *state.is_unlocked.lock().unwrap();
 
-    if let Some(window) = app.get_webview_window(if is_unlocked {"main"} else {"auth"}) {
+    if let Some(window) = app.get_webview_window(if is_unlocked { "main" } else { "auth" }) {
         let _ = window.unminimize();
         let _ = window.show();
         let _ = window.set_focus();

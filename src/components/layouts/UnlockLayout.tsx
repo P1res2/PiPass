@@ -1,6 +1,5 @@
-import { useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { motion } from "motion/react";
-import { getCurrentWindow, LogicalSize } from "@tauri-apps/api/window";
 import { BaseLayout } from "./BaseLayout";
 
 interface UnlockLayoutProps {
@@ -8,13 +7,6 @@ interface UnlockLayoutProps {
 }
 
 export function UnlockLayout({ children }: UnlockLayoutProps) {
-  useEffect(() => {
-    const currentWindow = getCurrentWindow();
-    currentWindow.setSize(new LogicalSize(500, 400));
-    currentWindow.center();
-    currentWindow.setAlwaysOnTop(true);
-  }, []);
-
   return (
     <BaseLayout className="flex flex-1 items-center justify-center">
       <motion.div

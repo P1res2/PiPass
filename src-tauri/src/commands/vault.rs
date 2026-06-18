@@ -1,9 +1,11 @@
 use std::sync::Mutex;
-use tauri::{State};
+use tauri::State;
+use tokio::sync::oneshot;
 
 // Global state
 pub struct VaultState {
     pub is_unlocked: Mutex<bool>,
+    pub pending_confirmation: Mutex<Option<oneshot::Sender<bool>>>,
 }
 
 #[tauri::command]

@@ -16,6 +16,7 @@
     "core:window:allow-toggle-maximize",
     "core:window:allow-close",
     "core:window:allow-start-dragging",
+    "core:window:allow-set-focus",
     "stronghold:default",
     "store:default",
     "fs:default",
@@ -26,7 +27,13 @@
     "dialog:default",
     {
       "identifier": "http:default",
-      "allow": [{ "url": "https://*.google.com/*" }]
-    }
+      "allow": [
+        {
+          "url": "https://*.google.com/*"
+        }
+      ]
+    },
+    "clipboard-manager:default",
+    "clipboard-manager:allow-write-text"
   ]
 }

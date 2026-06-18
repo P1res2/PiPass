@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { emit } from "@tauri-apps/api/event";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { emit, listen } from "@tauri-apps/api/event";
+import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
 import { useVaultStore } from "@/stores/vaultStore";
 import { useSettingsStore } from "@/stores/settingsStore";
-import { applyTheme } from "@/lib/theme";
 import i18n from "@/lib/i18n";
+import { cn } from "@/lib/utils";
+import { applyTheme } from "@/lib/theme";
 import { UnlockLayout } from "@/components/layouts";
 import { LockIcon } from "@/components/LockIcon";
 import { Button } from "@/components/ui/button";
@@ -19,12 +21,10 @@ import {
 } from "@/components/ui/input-group";
 import { EyeIcon, EyeOffIcon, LockKeyholeOpen } from "lucide-react";
 
-const mode =
-  new URLSearchParams(window.location.search).get("mode") ?? "unlock";
-
 export function AuthApp() {
   const { unlock } = useVaultStore();
   const { t } = useTranslation();
+  const [mode, setMode] = useState<"unlock" | "confirm">("unlock");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLocked, setIsLocked] = useState(true);
@@ -42,6 +42,32 @@ export function AuthApp() {
       });
   }, []);
 
+  // Change to confirm page
+  useEffect(() => {
+    const setup = async () => {
+      const unlisten = await listen<string>("navigate", (event) => {
+        setMode(event.payload as "unlock" | "confirm");
+      });
+
+      return unlisten;
+    };
+
+    setup();
+  }, []);
+
+  // If it is closed, switch to the unlock page
+  useEffect(() => {
+    const win = getCurrentWebviewWindow();
+    const unlisten = win.onCloseRequested(async () => {
+      await invoke("cancel_confirmation");
+      setMode("unlock");
+      setPassword("");
+    });
+    return () => {
+      unlisten.then((f) => f());
+    };
+  }, []);
+
   const handleSubmit = async () => {
     setIsLoading(true);
     setError(false);
@@ -49,13 +75,16 @@ export function AuthApp() {
     if (mode === "confirm") {
       const ok = await unlock(password);
       if (ok) {
-        await emit("confirm-result", "success");
+        await invoke("confirm_action", {
+          result: true,
+        });
+        setPassword("");
         await getCurrentWebviewWindow().close();
+        setMode("unlock");
       } else {
         setError(true);
       }
       setIsLoading(false);
-      setPassword("");
       return;
     }
 
@@ -71,7 +100,6 @@ export function AuthApp() {
     setIsLocked(false);
     await new Promise((r) => setTimeout(r, 800));
 
-    // Emite a senha pro main carregar o vault
     await emit("vault-unlocked", password);
     await getCurrentWebviewWindow().close();
 
@@ -94,12 +122,12 @@ export function AuthApp() {
             <div className="flex flex-col items-center gap-2 text-center">
               <LockIcon isLocked={isLocked} />
               <h1 className="text-xl font-bold">
-                {mode === "confirm" ? t("confirm.title") : t("unlock.title")}
+                {mode === "confirm" ? t("unlock.title") : t("unlock.title")}
               </h1>
             </div>
             <Field>
               <FieldLabel>{t("unlock.password")}</FieldLabel>
-              <InputGroup>
+              <InputGroup className={cn(error && "border-red-500")}>
                 <InputGroupInput
                   type={showPassword ? "text" : "password"}
                   value={password}
@@ -121,26 +149,25 @@ export function AuthApp() {
                 </InputGroupAddon>
               </InputGroup>
             </Field>
-            {error && (
-              <p className="text-destructive text-sm">{t("unlock.error")}</p>
-            )}
             <div className="flex gap-2">
               {mode === "confirm" && (
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="secondary"
                   className="flex-1"
                   onClick={async () => {
-                    await emit("confirm-result", "cancelled");
+                    setPassword("");
+                    await invoke("cancel_confirmation");
                     await getCurrentWebviewWindow().close();
+                    setMode("unlock");
                   }}
                 >
-                  {t("common.cancel")}
+                  <span>{t("common.cancel")}</span>
                 </Button>
               )}
               <Button type="submit" className="flex-1" disabled={isLoading}>
                 <LockKeyholeOpen />
-                {isLoading ? <Spinner /> : t("unlock.submit")}
+                {isLoading ? <Spinner /> : <span>{t("unlock.submit")}</span>}
               </Button>
             </div>
           </FieldGroup>

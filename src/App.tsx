@@ -84,6 +84,7 @@ function App() {
     let unlisten: (() => void) | undefined;
 
     const init = async () => {
+      await useVaultStore.getState().syncUnlock();
       const settings = await useSettingsStore.getState().load();
       if (settings?.language) i18n.changeLanguage(settings.language);
       if (settings?.theme) applyTheme(settings.theme);

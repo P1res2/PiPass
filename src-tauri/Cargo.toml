@@ -30,6 +30,8 @@ windows = { version = "0.61.3", features = ["Win32_UI_WindowsAndMessaging", "Win
 tauri-plugin-dialog = "2"
 tauri-plugin-http = "2"
 image = "0.25"
+tauri-plugin-clipboard-manager = "2"
+tokio = { version = "1", features = ["sync"] }
 
 [profile.dev.package.scrypt]
 opt-level = 3

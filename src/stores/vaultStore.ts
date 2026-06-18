@@ -30,6 +30,8 @@ interface VaultState {
   deleteCredential: (id: string) => Promise<void>;
   loadCredentials: () => Promise<void>;
   setSearch: (query: string) => void;
+  getSecret: (id: string) => Promise<string | null>;
+  syncUnlock: () => Promise<void>;
 }
 
 let _lockTimer: ReturnType<typeof setTimeout> | null = null;
@@ -175,4 +177,13 @@ export const useVaultStore = create<VaultState>((set, get) => ({
   },
 
   setSearch: (query) => set({ searchQuery: query }),
+
+  getSecret: async (id: string): Promise<string | null> => {
+    return getCredential(`secret:${id}`);
+  },
+
+  syncUnlock: async () => {
+    const isUnlock = await invoke<boolean>("get_vault_state");
+    set({ isUnlocked: isUnlock });
+  },
 }));

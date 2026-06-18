@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useVaultStore } from "@/stores/vaultStore";
@@ -19,7 +21,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Toggle } from "@/components/ui/toggle";
-import { Copy, EyeIcon, EyeOffIcon, Plus, Search } from "lucide-react";
+import { Copy, EyeIcon, EyeOffIcon, Lock, Plus, Search } from "lucide-react";
 import { getFaviconSrc } from "@/lib/favicon";
 
 export function VaultPage() {
@@ -97,6 +99,16 @@ function CredentialCard({ credential }: { credential: Credential }) {
     }
   }, [credential.iconPath]);
 
+  const handleCopyPassword = async () => {
+    const confirm = await invoke<boolean>("request_confirmation");
+
+    if (confirm) {
+      const password = await useVaultStore.getState().getSecret(credential.id);
+
+      await writeText(password ?? "");
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -132,6 +144,13 @@ function CredentialCard({ credential }: { credential: Credential }) {
             <Copy />
           </Button>
           <span className="text-sm">{credential.identifier}</span>
+        </div>
+
+        <div className="w-full flex gap-2 items-center">
+          <Button size="icon" onClick={handleCopyPassword}>
+            <Lock />
+          </Button>
+          <span className="text-sm">••••••••••••••</span>
         </div>
       </CardContent>
     </Card>

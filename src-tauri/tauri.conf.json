@@ -26,8 +26,8 @@
       {
         "label": "auth",
         "title": "PiPass",
-        "width": 500,
-        "height": 400,
+        "width": 400,
+        "height": 300,
         "decorations": false,
         "resizable": false,
         "alwaysOnTop": true,
